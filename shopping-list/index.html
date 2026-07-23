@@ -167,7 +167,7 @@
 <script>
   const SUPABASE_URL = 'https://zbaoxitoalqpnrwucgpy.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_i6QnRCzNd5x_Ysb3ZCOC1w_0zQ6iAY6';
-  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   const TABLE = 'shopping_items';
 
   let items = [];
@@ -179,7 +179,7 @@
   const clearDoneBtn = document.getElementById('clear-done');
 
   async function load() {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseClient
       .from(TABLE)
       .select('*')
       .order('created_at', { ascending: true });
@@ -233,7 +233,7 @@
   }
 
   async function add(name) {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseClient
       .from(TABLE)
       .insert({ name, done: false })
       .select()
@@ -246,7 +246,7 @@
   async function toggle(id) {
     const item = items.find(i => i.id === id);
     if (!item) return;
-    const { error } = await supabase
+    const { error } = await supabaseClient
       .from(TABLE)
       .update({ done: !item.done })
       .eq('id', id);
@@ -256,7 +256,7 @@
   }
 
   async function remove(id) {
-    const { error } = await supabase
+    const { error } = await supabaseClient
       .from(TABLE)
       .delete()
       .eq('id', id);
@@ -277,7 +277,7 @@
   clearDoneBtn.addEventListener('click', async () => {
     const doneIds = items.filter(i => i.done).map(i => i.id);
     if (doneIds.length === 0) return;
-    const { error } = await supabase
+    const { error } = await supabaseClient
       .from(TABLE)
       .delete()
       .in('id', doneIds);
